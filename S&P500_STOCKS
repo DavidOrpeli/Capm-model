@@ -1,0 +1,32 @@
+import pandas_datareader.data as web
+from datetime import datetime
+from datapackage import Package
+import pandas as pd
+
+package = Package('https://datahub.io/core/s-and-p-500-companies/datapackage.json')
+
+list=[]
+for resource in package.resources:
+    if resource.descriptor['datahub']['type'] == 'derived/csv':
+        list = resource.read()
+
+df = pd.DataFrame(list)
+symbol = df[0]
+
+start = datetime(2014, 9 ,1)
+end = datetime(2019, 9, 2)
+
+count = 0
+qute=[]
+qute = pd.DataFrame(qute)
+for i in symbol:
+    stock=[]
+    stock = web.DataReader(i,'iex',start,end)
+    stock['symbol'] = i
+    count = count + 1
+    print(count,i)
+    qute=pd.concat([qute,stock])
+
+writer = pd.ExcelWriter('C:\python\qute.xlsx')
+qute.to_excel(writer,'Sheet1')
+writer.save()
